@@ -151,15 +151,20 @@ Position monitoring
 Additionally you can specify monitoring-locations - TraP will attempt forced-fits
 at these co-ordinates, which can help to identify faint sources or place upper
 limits on a non-detection. Co-ordinates should be a JSON-format
-list of RA,Dec pairs in decimal degrees, either listed at command line::
+list of RA,Dec pairs in decimal degrees, with an optional third element used as the 
+name of the monitor. This can be either listed at command line::
 
     $ trap-manage.py run <jobname> -m "[[123,45],[124,46]]"
 
-Or in a JSON-formatted file, e.g.::
+or with names:
+
+    $ trap-manage.py run <jobname> -m "[[123,45,name1],[124,46,name2]]"
+
+Or in a JSON-formatted file (again names are optional), e.g.::
 
     $ cat mycoords.json
-        [[123,45],
-         [124,46]
+        [[123,45,name1],
+         [124,46,name2]
         ]
 
     $ trap-manage.py run <jobname> -l mycoords.json
