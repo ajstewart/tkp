@@ -8,3 +8,4 @@ import prettyprint
 import quality
 import source_extraction
 import forced_fitting
+import source_catalog_extraction

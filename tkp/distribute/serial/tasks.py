@@ -26,7 +26,10 @@ def extract_sources(accessor, extraction_params):
     logger.debug("running extracted sources task")
     return tkp.steps.source_extraction.extract_sources(accessor,
                                                        extraction_params)
-
+def read_source_catalog(accessor, extraction_params):
+    logger.debug("running source catalog loading task")
+    return tkp.steps.source_catalog_extraction.extract_sources(accessor,
+                                                         extraction_params)
 
 def get_accessors(images):
     logger.debug("Creating accessors for images")

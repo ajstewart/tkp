@@ -35,8 +35,14 @@ def extract_sources(zipped):
     accessor, args = zipped
     extraction_params = args[0]
     return tkp.steps.source_extraction.extract_sources(accessor,
-                                                       extraction_params)
-
+                                                       extraction_params)                                                
+                                                       
+def read_source_catalog(zipped):
+    logger.debug("running source catalog loading task")
+    accessor, args = zipped
+    extraction_params = args[0]
+    return tkp.steps.source_catalog_extraction.extract_sources(accessor,
+                                                         extraction_params)
 
 def forced_fits(zipped):
     logger.debug("running forced fits task")
