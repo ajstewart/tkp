@@ -228,6 +228,15 @@ def source_extraction(accessors, job_config, runner):
     return extraction_results
 
 
+def read_source_catalog(accessors, job_config, runner):
+    logger.debug("reading source catalogs")
+    arguments = [job_config.source_catalogs]
+    extraction_results = runner.map("read_source_catalog", accessors, arguments)
+    total = sum(len(i[0]) for i in extraction_results)
+    logger.info('read in {} sources in {} images'.format(total, len(extraction_results)))
+    return extraction_results
+
+
 def do_forced_fits(runner, all_forced_fits):
     logger.debug('performing forced fitting')
     returned = runner.map("forced_fits", all_forced_fits)
@@ -282,7 +291,8 @@ def get_accessors(runner, all_images):
     imgs = [[img] for img in all_images]
     accessors = runner.map("get_accessors", imgs)
     return [a[0] for a in accessors if a]
-
+    
+    
 
 def get_metadata_for_sorting(runner, image_paths):
     """
@@ -338,9 +348,12 @@ def timestamp_step(runner, images, job_config, dataset_id, copy_images):
     # filter out the bad ones
     good_images = quality_check(db_images, accessors, job_config, runner)
     good_accessors = [i[1] for i in good_images]
-
-    # do the source extractions
-    extraction_results = source_extraction(good_accessors, job_config, runner)
+    
+    if job_config.source_catalogs.use_catalogs:
+        extraction_results = read_source_catalog(good_accessors, job_config, runner)
+    else:
+        # do the source extractions
+        extraction_results = source_extraction(good_accessors, job_config, runner)
 
     store_extractions(good_images, extraction_results, job_config)
 

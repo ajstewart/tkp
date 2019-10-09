@@ -48,10 +48,11 @@ def extract_sources(accessor, extraction_params):
         force_beam=extraction_params['force_beam']
     )
     logger.debug("Detected %d sources in image %s" % (len(results), accessor.url))
-
+    
     ew_sys_err = extraction_params['ew_sys_err']
     ns_sys_err = extraction_params['ns_sys_err']
     serialized = [r.serialize(ew_sys_err, ns_sys_err) for r in results]
+
     return ExtractionResults(sources=serialized,
                              rms_min=float(data_image.rmsmap.min()),
                              rms_max=float(data_image.rmsmap.max())
