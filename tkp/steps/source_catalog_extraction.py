@@ -54,7 +54,7 @@ def extract_sources(accessor, extraction_params):
     if catalog_type.lower() == "selavy":
         the_catalog = Selavy(catalog_file)
         
-    the_catalog.read_catalog(remove_islands=True)
+    the_catalog.read_catalog()
     
     ew_sys_err = extraction_params['ew_sys_err']
     ns_sys_err = extraction_params['ns_sys_err']

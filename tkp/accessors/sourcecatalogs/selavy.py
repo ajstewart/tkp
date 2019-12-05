@@ -11,27 +11,18 @@ class Selavy:
         self.df = pd.DataFrame()
         
         
-    def read_catalog(self, remove_bad_sources=True, remove_islands=False, zero_rms_fill_val=0.034e-3):
+    def read_catalog(self, remove_bad_sources=False, zero_rms_fill_val=0.034e-3):
         """
         Returns a pandas dataframe of the catalog.
         """
-        with open(self.catalog_file, "r") as f:
-            lines=f.readlines()
-            
-        columns=lines[0].split()[1:-1]
-        data=[i.split() for i in lines[2:]]
-    
-        selavy=pd.DataFrame(data, columns=columns)
+        selavy=pd.read_fwf(self.catalog_file, skiprows=[1,])
         
         if remove_bad_sources:
-            selavy=selavy[selavy["flag_c4"].astype(int)==0].reset_index(drop=True)
-            
-        if remove_islands:
-            selavy=selavy[selavy["has_siblings"].astype(int)==0].reset_index(drop=True)
+            selavy=selavy[selavy["flag_c4"]==0].reset_index(drop=True)
         
-        selavy.loc[ selavy.rms_image.astype(np.float)==0.0, "rms_image" ] =  zero_rms_fill_val
-        selavy.loc[ selavy.flux_peak_err.astype(np.float)==0.0, "flux_peak_err" ] = selavy.loc[ selavy.flux_peak_err.astype(np.float)==0.0, "rms_image" ] 
-        selavy.loc[ selavy.flux_int_err.astype(np.float)==0.0, "flux_int_err" ] = selavy.loc[ selavy.flux_peak_err.astype(np.float)==0.0, "rms_image" ] 
+        selavy.loc[ selavy.rms_image==0.0, "rms_image" ] =  zero_rms_fill_val
+        selavy.loc[ selavy.flux_peak_err==0.0, "flux_peak_err" ] = selavy.loc[ selavy.flux_peak_err==0.0, "rms_image" ] 
+        selavy.loc[ selavy.flux_int_err==0.0, "flux_int_err" ] = selavy.loc[ selavy.flux_peak_err==0.0, "rms_image" ] 
         
         self.df = selavy
         
@@ -45,7 +36,7 @@ class Selavy:
         read_sources = []
         
         for i,row in self.df.iterrows():
-            rndm = (random.randint(100000,999999)*1.e-9)
+            rndm = (random.randint(100000,999999)*1.e-12)
             read_sources.append([
                 np.float(row["ra_deg_cont"]),
                 np.float(row["dec_deg_cont"]),
