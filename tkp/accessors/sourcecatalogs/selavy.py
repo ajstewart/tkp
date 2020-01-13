@@ -3,6 +3,9 @@ import pandas as pd
 from tkp.sourcefinder.utils import get_error_radius
 import numpy as np
 import random
+import logging
+
+logger = logging.getLogger(__name__)
 
 class Selavy:
     
@@ -16,6 +19,21 @@ class Selavy:
         Returns a pandas dataframe of the catalog.
         """
         selavy=pd.read_fwf(self.catalog_file, skiprows=[1,])
+        
+        to_search = [i  for i in selavy.columns if i not in ["component_id", "island_id"]]
+
+        #Instead of just blindly dropping we want to warn if there are duplicates
+        dup_mask = selavy.duplicated(subset=to_search)
+
+        result = selavy[dup_mask]
+        
+        if len(result.index) > 0:
+            logger.warning("Duplicate sources detected in {}!".format(self.catalog_file))
+            selavy.drop(result.index, inplace=True)
+            logger.warning("Removed {} sources!".format(len(result.index)))
+            selavy.reset_index(inplace=True, drop=True)
+        else:
+            logger.info("No duplicate sources found in Selavy catalog.")
         
         if remove_bad_sources:
             selavy=selavy[selavy["flag_c4"]==0].reset_index(drop=True)
