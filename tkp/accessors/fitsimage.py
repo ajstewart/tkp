@@ -75,10 +75,14 @@ class FitsImage(DataAccessor):
         """Returns a WCS object"""
         header = self.header
         wcs = WCS()
+        if 'cd1_1' in header:
+            delta_key1, delta_key2 = ('cd1_1', 'cd2_2')
+        else:
+            delta_key1, delta_key2 = ('cdelt1', 'cdelt2')
         try:
             wcs.crval = header['crval1'], header['crval2']
             wcs.crpix = header['crpix1'] - 1, header['crpix2'] - 1
-            wcs.cdelt = header['cdelt1'], header['cdelt2']
+            wcs.cdelt = header[delta_key1], header[delta_key2]
         except KeyError:
             msg = "Coordinate system not specified in FITS"
             logger.error(msg)
@@ -141,7 +145,7 @@ class FitsImage(DataAccessor):
                     freq_bw = header['cdelt4']
                 else:
                     freq_eff = header['restfreq']
-                    freq_bw = 0.0
+                    freq_bw = 1.0
         except KeyError:
             msg = "Frequency not specified in headers for {}".format(self.url)
             logger.error(msg)
