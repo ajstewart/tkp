@@ -2,6 +2,7 @@ import logging
 from tkp.accessors import sourcefinder_image_from_accessor
 from collections import namedtuple
 from tkp.accessors.sourcecatalogs.selavy import Selavy
+from tkp.accessors.sourcecatalogs.pybdsf import Pybdsf
 
 logger = logging.getLogger(__name__)
 
@@ -53,6 +54,10 @@ def extract_sources(accessor, extraction_params):
     
     if catalog_type.lower() == "selavy":
         the_catalog = Selavy(catalog_file)
+    elif catalog_type.lower() == "pybdsf":
+        the_catalog = Pybdsf(catalog_file)
+    else:
+        logger.critical("Format of source catalogs not recongized!")
         
     the_catalog.read_catalog()
     

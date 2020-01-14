@@ -13,6 +13,7 @@ install_requires = """
     sqlalchemy>=1.0.0
     alembic
     monotonic
+    pandas<0.25
     """.split()
 
 extras_require = {
