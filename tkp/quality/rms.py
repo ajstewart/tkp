@@ -58,7 +58,10 @@ def subregion(data, f=4):
         data: a numpy array
     """
     x, y = data.shape
-    return data[(x/2 - x/f):(x/2 + x/f), (y/2 - y/f):(y/2 + y/f)]
+    data = data[(x/2 - x/f):(x/2 + x/f), (y/2 - y/f):(y/2 + y/f)]
+    # check for nan as sigma clipping cannot handle them
+    data = data[~numpy.isnan(data)]
+    return data
 
 
 def rms_with_clipped_subregion(data, rms_est_sigma=3, rms_est_fraction=4):
