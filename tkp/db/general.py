@@ -80,7 +80,7 @@ def insert_monitor_positions(dataset_id, positions):
       positions (list of tuples): List of (RA, decl) tuples in decimal degrees.
     """
 
-    monitor_entries = [(dataset_id, p[0], p[1]) for p in positions]
+    monitor_entries = [(dataset_id, p[0], p[1], p[2]) if len(p)==3 else (dataset_id, p[0], p[1], None) for p in positions]
 
     insertion_query =  """\
 INSERT INTO monitor
@@ -88,10 +88,11 @@ INSERT INTO monitor
   dataset
   ,ra
   ,decl
+  ,name
   )
 VALUES {placeholder}
 """
-    cols_per_row = 3
+    cols_per_row = 4
     placeholder_per_row = '('+ ','.join(['%s']*cols_per_row) +')'
     placeholder_full = ','.join([placeholder_per_row]*len(positions))
     query = insertion_query.format(placeholder= placeholder_full)
